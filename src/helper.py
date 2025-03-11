@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import google.generativeai as genai 
+from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os 
 from gtts import gTTS
@@ -7,8 +8,8 @@ from gtts import gTTS
 print("perfect!!")
 load_dotenv()
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
+groq_api_key = os.getenv("GROQ_API_KEY")
+os.environ["GROQ_API_KEY"] = groq_api_key
 
 
 def voice_input():
@@ -37,12 +38,14 @@ def text_to_speech(text):
 def llm_model_object(user_text):
     #model = "models/gemini-pro"
     
-    genai.configure(api_key=GOOGLE_API_KEY)
     
-    model = genai.GenerativeModel('gemini-pro')
+    model = ChatGroq(
+        model="llama-3.3-70b-versatile",
+        api_key = groq_api_key
+    )
     
-    response = model.generate_content(user_text)
+    response = model.invoke(user_text)
     
-    result = response.text
+    result = response.content
     
     return result
